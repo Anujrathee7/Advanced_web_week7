@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const express_validator_1 = require("express-validator");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const validToken_1 = require("../middleware/validToken");
@@ -19,18 +18,13 @@ router.get('/user/list', async (req, res) => {
     }
 });
 // User registration route
-router.post('/user/register', (0, express_validator_1.body)("email").isEmail().escape(), (0, express_validator_1.body)("password").isLength({ min: 3 }).escape(), async (req, res) => {
-    // Validate request body
-    const errors = (0, express_validator_1.validationResult)(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+router.post('/user/register', async (req, res) => {
     try {
         // Check if user already exists
         const { email, password } = req.body;
+        console.log(req.body);
         const existingUser = users.find(u => u.email === email);
-        console.log(existingUser);
-        if (existingUser.length > 0) {
+        if (existingUser) {
             return res.status(403).json({ message: 'User already exists' });
         }
         // Hash the password
@@ -44,12 +38,7 @@ router.post('/user/register', (0, express_validator_1.body)("email").isEmail().e
         return res.status(500).json({ message: 'Server error' });
     }
 });
-router.post('/user/login', (0, express_validator_1.body)("email").isEmail().escape(), (0, express_validator_1.body)("password").isLength({ min: 3 }).escape(), async (req, res) => {
-    // Validate request body
-    const errors = (0, express_validator_1.validationResult)(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+router.post('/user/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = users.find(u => u.email === email);

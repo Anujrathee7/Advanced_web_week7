@@ -24,18 +24,14 @@ router.get('/user/list', async (req: Request, res: Response) => {
 router.post('/user/register',
     async (req: Request, res: Response) => {
 
-    // Validate request body
-    const errors: Result<ValidationError> = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
         // Check if user already exists
         const { email, password } = req.body;
+        console.log(req.body)
         const existingUser = users.find(u => u.email === email);
-        console.log(existingUser);
-        if (existingUser.length > 0) {
+        
+        
+        if (existingUser) {
             return res.status(403).json({ message: 'User already exists' });
         }
         // Hash the password
@@ -53,13 +49,7 @@ router.post('/user/register',
 }});
 
 router.post('/user/login',
-    async (req: Request, res: Response) => {
-    // Validate request body
-    const errors: Result<ValidationError> = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-    
+    async (req: Request, res: Response) => {    
     try{
 
         const { email, password } = req.body;
