@@ -42,14 +42,15 @@ router.post('/user/register',
         users.push(user);
 
 
-        return res.status(201).json(user);
+        return res.status(200).json(user);
 
     }catch (error) {
     return res.status(500).json({ message: 'Server error' });
 }});
 
 router.post('/user/login',
-    async (req: Request, res: Response) => {    
+    async (req: Request, res: Response) => {
+    
     try{
 
         const { email, password } = req.body;
