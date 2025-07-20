@@ -17,6 +17,6 @@ export const validateToken = (req: CustomRequest, res: Response, next: NextFunct
         next()
 
     }catch(error:any){
-        return res.status(201).json({message: error})
+        return res.status(401).json({message: error})
     }
 }
