@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">>
+</head>
+<body>
+    <h1 id="message"></h1>
+    <button id="logout" style="display:none">Logout</button>
+    <script>
+        const token = localStorage.getItem('token')
+        const authentcateUser = async () =>{
+            try{
+            const response = await fetch('/api/private',{
+                headers: {Authorization: `Bearer ${token}`}
+            })
+            if(response.ok){
+                data = await response.json()
+                console.log(data)
+                document.getElementById('message').textContent = data.message;
+                document.getElementById('logout').style.display = 'block';
+            }
+        } catch(error){
+            console.log(error)
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        }}
+
+        if(!token){
+            window.location.href = '/login.html'
+        }else{
+            authentcateUser()
+        }
+
+        document.getElementById('logout').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        });
+ </script>
+</body>
+</html>

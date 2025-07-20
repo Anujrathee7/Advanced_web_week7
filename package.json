@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mongoose": "^5.11.96",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
+    "bcrypt": "^6.0.0",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.4",
+    "morgan": "^1.10.1",
+    "nodemon": "^3.1.10"
+  },
+  "name": "week6",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "tsc-watch --onSuccess \"nodemon dist/app.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "tsc-watch": "^7.1.1"
+  }
+}
