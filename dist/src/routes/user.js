@@ -4,20 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const User_1 = require("../models/User");
 const express_validator_1 = require("express-validator");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const validToken_1 = require("../middleware/validToken");
 const router = (0, express_1.Router)();
+let users = [];
 router.get('/user/list', async (req, res) => {
     try {
-        const users = await User_1.User.find();
-        let formattedUsers = users.map(user => ({
-            email: user.email,
-            password: user.password
-        }));
-        return res.status(200).json(formattedUsers);
+        return res.status(200).json(users);
     }
     catch (error) {
         return res.status(500).json({ message: 'Server error' });
@@ -32,20 +27,18 @@ router.post('/user/register', (0, express_validator_1.body)("email").isEmail().e
     }
     try {
         // Check if user already exists
-        const existingUser = await User_1.User.find({ email: req.body.email });
+        const { email, password } = req.body;
+        const existingUser = users.find(u => u.email === email);
         console.log(existingUser);
         if (existingUser.length > 0) {
             return res.status(403).json({ message: 'User already exists' });
         }
         // Hash the password
         const salt = bcrypt_1.default.genSaltSync(10);
-        const hash = bcrypt_1.default.hashSync(req.body.password, salt);
-        // Create new user
-        const user = await User_1.User.create({
-            email: req.body.email,
-            password: hash
-        });
-        return res.status(201).json({ email: user.email, password: user.password });
+        const hash = bcrypt_1.default.hashSync(password, salt);
+        const user = { email, password: hash };
+        users.push(user);
+        return res.status(201).json(user);
     }
     catch (error) {
         return res.status(500).json({ message: 'Server error' });
@@ -58,7 +51,8 @@ router.post('/user/login', (0, express_validator_1.body)("email").isEmail().esca
         return res.status(400).json({ errors: errors.array() });
     }
     try {
-        const user = await User_1.User.findOne({ email: req.body.email });
+        const { email, password } = req.body;
+        const user = users.find(u => u.email === email);
         if (!user) {
             return res.status(403).json({ message: 'User not found' });
         }

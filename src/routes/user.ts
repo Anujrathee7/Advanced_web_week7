@@ -7,17 +7,13 @@ import { validateToken } from "../middleware/validToken";
 
 const router: Router = Router();
 
+let users: any[] = [];
+
+
 
 router.get('/user/list', async (req: Request, res: Response) => {
     try {
-        const users: IUser[] = await User.find();
-
-        let formattedUsers = users.map(user => ({
-            email: user.email,
-            password: user.password
-        }));
-
-        return res.status(200).json(formattedUsers);
+        return res.status(200).json(users);
     } catch (error) {
         return res.status(500).json({ message: 'Server error' }); 
     }
@@ -37,22 +33,21 @@ router.post('/user/register',body("email").isEmail().escape(),
 
     try {
         // Check if user already exists
-        const existingUser = await User.find({ email: req.body.email });
+        const { email, password } = req.body;
+        const existingUser = users.find(u => u.email === email);
         console.log(existingUser);
         if (existingUser.length > 0) {
             return res.status(403).json({ message: 'User already exists' });
         }
         // Hash the password
         const salt: string = bcrypt.genSaltSync(10);
-        const hash: string = bcrypt.hashSync(req.body.password, salt);
+        const hash: string = bcrypt.hashSync(password, salt);
 
-        // Create new user
-        const user: IUser = await User.create({
-            email: req.body.email,
-            password: hash
-        })
+        const user = {email,password: hash}
+        users.push(user);
 
-        return res.status(201).json({email: user.email, password: user.password});
+
+        return res.status(201).json(user);
 
     }catch (error) {
     return res.status(500).json({ message: 'Server error' });
@@ -69,7 +64,9 @@ router.post('/user/login', body("email").isEmail().escape(),
     
     try{
 
-        const user: IUser | null = await User.findOne({email: req.body.email});
+        const { email, password } = req.body;
+        const user = users.find(u => u.email === email);
+
         if (!user) {
             return res.status(403).json({ message: 'User not found' });
         }
