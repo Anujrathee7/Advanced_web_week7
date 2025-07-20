@@ -21,8 +21,7 @@ router.get('/user/list', async (req: Request, res: Response) => {
 
 // User registration route
 
-router.post('/user/register',body("email").isEmail().escape(),
-    body("password").isLength({min: 3}).escape(),
+router.post('/user/register',
     async (req: Request, res: Response) => {
 
     // Validate request body
@@ -53,8 +52,7 @@ router.post('/user/register',body("email").isEmail().escape(),
     return res.status(500).json({ message: 'Server error' });
 }});
 
-router.post('/user/login', body("email").isEmail().escape(),
-    body("password").isLength({min: 3}).escape(),
+router.post('/user/login',
     async (req: Request, res: Response) => {
     // Validate request body
     const errors: Result<ValidationError> = validationResult(req);
